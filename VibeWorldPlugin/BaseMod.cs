@@ -111,7 +111,7 @@ namespace VibeWorld
                             break;
                         default:
                             if (regionSongList.TryGetValue(Custom.RootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
-                            //Fallback to hardcoded song list if not valid playlist for the region is found
+                            //Fallback to hardcoded song list if no valid playlist for the region is found
                             else
                             {
                                 Debug.Log("VibeWorld:  No valid song found!");
