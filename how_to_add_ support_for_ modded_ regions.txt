@@ -1,0 +1,3 @@
+Ever since Version 1.2, Intelligent Mode will automatically detect and play music belonging to each
+custom/modified vanilla region. You can still create your own playlists for modded regions by adding a playlist file to your
+Playlist folder with the acronym of the modded region as a name (Example: TM.txt for a The Mast playlist).
