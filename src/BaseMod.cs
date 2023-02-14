@@ -9,7 +9,7 @@ using BepInEx;
 
 namespace VibeWorld
 {
-    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.3")]
+    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4")]
     public class BaseMod : BaseUnityPlugin
     {
         public static BaseMod instance;
