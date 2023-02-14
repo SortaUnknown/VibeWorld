@@ -4,7 +4,6 @@ using UnityEngine;
 using Music;
 using RWCustom;
 using System.IO;
-using OptionalUI;
 using BepInEx;
 
 namespace VibeWorld
@@ -12,8 +11,6 @@ namespace VibeWorld
     [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4")]
     public class BaseMod : BaseUnityPlugin
     {
-        public static BaseMod instance;
-
         public enum SongMode
         {
             Default,
@@ -24,7 +21,7 @@ namespace VibeWorld
 
         public void OnEnable()
         {
-            instance = this;
+            MachineConnector.SetRegisteredOI("HelloThere.VibeWorld", new VibeConfig());
 
             On.RainWorldGame.ctor += new On.RainWorldGame.hook_ctor(GameCtorPatch);
             On.RainWorldGame.RawUpdate += new On.RainWorldGame.hook_RawUpdate(RawUpdatePatch);
@@ -39,7 +36,6 @@ namespace VibeWorld
         public static int songOrder = 0;
 
         public static SongMode songMode;
-        public static bool randomSelect;
 
         public static bool echoMode = false;
 
@@ -121,7 +117,7 @@ namespace VibeWorld
                     }
                 }
                 if (songOrder >= thisRegionList.Length) { songOrder = 0; }
-                if (randomSelect) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
+                if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
                 else { newSong = thisRegionList[songOrder]; }
 
                 musicPlayer.RequestArenaSong(newSong, 200f);
@@ -137,6 +133,8 @@ namespace VibeWorld
         static void GameCtorPatch(On.RainWorldGame.orig_ctor orig, RainWorldGame instance, ProcessManager manager)
         {
             orig.Invoke(instance, manager);
+
+            songMode = StringToMode(VibeConfig.modeValue.Value);
 
             echoMode = false;
 
@@ -190,11 +188,6 @@ namespace VibeWorld
             }
         }
 
-        public static OptionInterface LoadOI()
-        {
-            return new VibeConfig();
-        }
-
         public static void AnalyzeRegionMusic(RainWorldGame game)
         {
             if (songMode == SongMode.IntelligentMode)
@@ -233,6 +226,21 @@ namespace VibeWorld
                 intelligentSongs.OrderBy(c => UnityEngine.Random.value);
                 settingsProxy = null;
                 songList.Clear();
+            }
+        }
+
+        static SongMode StringToMode(string input)
+        {
+            switch (input)
+            {
+                case "General Mode":
+                    return SongMode.GeneralMode;
+                case "Intelligent Mode":
+                    return SongMode.IntelligentMode;
+                case "Echo Mode":
+                    return SongMode.EchoMode;
+                default:
+                    return SongMode.Default;
             }
         }
     }
