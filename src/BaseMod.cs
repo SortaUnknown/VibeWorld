@@ -14,7 +14,7 @@ using System.Security.Permissions;
 
 namespace VibeWorld
 {
-    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4")]
+    [BepInPlugin("helloThere.vibeworld", "Vibe World", "1.4")]
     public class BaseMod : BaseUnityPlugin
     {
         public enum SongMode
@@ -27,13 +27,11 @@ namespace VibeWorld
 
         public void OnEnable()
         {
-            MachineConnector.SetRegisteredOI("HelloThere.VibeWorld", new VibeConfig());
-
+            On.RainWorld.OnModsInit += new On.RainWorld.hook_OnModsInit(ModsInitPatch);
             On.RainWorldGame.ctor += new On.RainWorldGame.hook_ctor(GameCtorPatch);
             On.RainWorldGame.RawUpdate += new On.RainWorldGame.hook_RawUpdate(RawUpdatePatch);
             On.RegionGate.Update += new On.RegionGate.hook_Update(GateUpdatePatch);
         }
-
 
         public static Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
 
@@ -75,6 +73,13 @@ namespace VibeWorld
         public static string[] intelligentSongs;
 
         public static string[] generalSongs;
+
+        static void ModsInitPatch(On.RainWorld.orig_OnModsInit orig, RainWorld instance)
+        {
+            orig.Invoke(instance);
+
+            MachineConnector.SetRegisteredOI("HelloThere.VibeWorld", new VibeConfig());
+        }
 
         static void RawUpdatePatch(On.RainWorldGame.orig_RawUpdate orig, RainWorldGame instance, float dt)
         {
