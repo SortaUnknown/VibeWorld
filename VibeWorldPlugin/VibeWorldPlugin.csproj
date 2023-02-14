@@ -1,27 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net35</TargetFramework>
-    <Version>1.3</Version>
+    <TargetFramework>net48</TargetFramework>
+    <Version>1.4</Version>
     <Authors>HelloThere</Authors>
     <Copyright />
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\PartialityRemnants\Assembly-CSharp.dll</HintPath>
+    <Reference Include="PUBLIC-Assembly-CSharp">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/utils/PUBLIC-Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\Steam\steamapps\common\Rain World\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="ConfigMachine">
-      <HintPath>..\..\..\Steam\steamapps\common\Rain World\Mods\ConfigMachine.dll</HintPath>
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/core/BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="HOOKS-Assembly-CSharp">
-      <HintPath>..\..\..\Steam\steamapps\common\Rain World\BepInEx\core\HOOKS-Assembly-CSharp.dll</HintPath>
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/plugins/HOOKS-Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\Steam\steamapps\common\Rain World\RainWorld_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 
