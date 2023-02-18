@@ -9,12 +9,11 @@ using System.Security.Permissions;
 
 #pragma warning disable CS0618 //Type or member is obsolete
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
-[module: System.Security.UnverifiableCode]
 #pragma warning restore CS0618 //Type or member is obsolete
 
 namespace VibeWorld
 {
-    [BepInPlugin("helloThere.vibeworld", "Vibe World", "1.4")]
+    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4")]
     public class BaseMod : BaseUnityPlugin
     {
         public enum SongMode
