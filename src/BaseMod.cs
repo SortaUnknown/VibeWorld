@@ -130,13 +130,22 @@ namespace VibeWorld
                 if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
                 else { newSong = thisRegionList[songOrder]; }
 
-                musicPlayer.RequestArenaSong(newSong, 200f);
+                Song song = new Song(musicPlayer, newSong, MusicPlayer.MusicContext.StoryMode);
+                song.playWhenReady = true;
+                song.volume = 1;
+                song.fadeInTime = 40.0f;
+                musicPlayer.song = song;
+                //musicPlayer.song.StartPlaying();
+                songOrder++;
+                
+                /*musicPlayer.RequestArenaSong(newSong, 200f);
 
                 if (musicPlayer.song != null)
                 {
                     songOrder++;
+                    musicPlayer.song.stopAtDeath = false;
                     musicPlayer.song.volume = 1;
-                }
+                }*/
             }
         }
 
