@@ -130,7 +130,21 @@ namespace VibeWorld
                 if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
                 else { newSong = thisRegionList[songOrder]; }
 
-                musicPlayer.RequestArenaSong(newSong, 200f);
+                //Taken from RainSong
+                //Create a new MusicEvent with default values to serve as a dummy to populate the Song object
+                MusicEvent dummy = new MusicEvent();
+                Song song = new Song(musicPlayer, newSong, MusicPlayer.MusicContext.StoryMode)
+                {
+                    fadeOutAtThreat = dummy.maxThreatLevel,
+                    Loop = false,
+                    priority = 100f,
+                    baseVolume = 0.1f,
+                    fadeInTime = dummy.fadeInTime,
+                    stopAtDeath = false,
+                    stopAtGate = true
+                };
+                musicPlayer.song = song;
+                musicPlayer.song.playWhenReady = true;
 
                 if (musicPlayer.song != null)
                 {
