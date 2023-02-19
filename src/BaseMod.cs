@@ -116,7 +116,7 @@ namespace VibeWorld
                             thisRegionList = generalSongs;
                             break;
                         default:
-                            if (regionSongList.TryGetValue(Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
+                            if (regionSongList.TryGetValue(Custom.RootFolderDirectory() + Path.DirectorySeparatorChar + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
                             //Fallback to hardcoded song list if no valid playlist for the region is found
                             else
                             {
@@ -154,7 +154,7 @@ namespace VibeWorld
             //On first game start, read playlist files and fill out dictionaries/lists
             if (!filesChecked)
             {
-                string path = Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar;
+                string path = Custom.RootFolderDirectory() +  Path.DirectorySeparatorChar + "Playlists" + Path.DirectorySeparatorChar;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
