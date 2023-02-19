@@ -154,7 +154,7 @@ namespace VibeWorld
             //On first game start, read playlist files and fill out dictionaries/lists
             if (!filesChecked)
             {
-                string path = Custom.RootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar;
+                string path = Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
