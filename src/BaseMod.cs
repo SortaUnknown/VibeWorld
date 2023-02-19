@@ -116,7 +116,7 @@ namespace VibeWorld
                             thisRegionList = generalSongs;
                             break;
                         default:
-                            if (regionSongList.TryGetValue(Custom.RootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
+                            if (regionSongList.TryGetValue(Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
                             //Fallback to hardcoded song list if no valid playlist for the region is found
                             else
                             {
@@ -167,7 +167,7 @@ namespace VibeWorld
                         continue;
                     }
                     string[] songList = File.ReadAllLines(file);
-                    songList.OrderBy(c => UnityEngine.Random.value);
+                    songList.OrderBy(c => Random.value);
                     Debug.Log("VibeWorld:  Adding: " + file + " songs to list...");
                     regionSongList.Add(file, songList);
                 }
@@ -177,7 +177,7 @@ namespace VibeWorld
                     Debug.Log("VibeWorld:  General playlist not found! This may cause problems if you are using General Mode.");
                     generalSongs = calmSongs;
                 }
-                generalSongs.OrderBy(c => UnityEngine.Random.value);
+                generalSongs.OrderBy(c => Random.value);
                 filesChecked = true;
             }
 
@@ -234,7 +234,7 @@ namespace VibeWorld
                 }
                 songList.RemoveAll(x => x == string.Empty);
                 intelligentSongs = songList.ToArray();
-                intelligentSongs.OrderBy(c => UnityEngine.Random.value);
+                intelligentSongs.OrderBy(c => Random.value);
                 settingsProxy = null;
                 songList.Clear();
             }
