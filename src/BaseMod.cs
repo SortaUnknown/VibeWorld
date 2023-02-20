@@ -42,6 +42,8 @@ namespace VibeWorld
 
         public static bool echoMode = false;
 
+        private static bool mscActive = false;
+
         public static string[] modes =
         {
             "Intelligent Mode",
@@ -78,6 +80,31 @@ namespace VibeWorld
             orig.Invoke(instance);
 
             MachineConnector.SetRegisteredOI("HelloThere.VibeWorld", new VibeConfig());
+
+            bool mscEnabled = MachineConnector.IsThisModActive("moreslugcats");
+
+            if (!mscActive)
+            {
+                if (mscEnabled)
+                {
+                    List<string> tList = echoSongs.ToList();
+                    tList.Add("NA_42 - Else8");
+                    echoSongs = tList.ToArray();
+                    tList.Clear();
+                    mscActive = true;
+                }
+            }
+            else
+            {
+                if (!mscEnabled)
+                {
+                    List<string> tList = echoSongs.ToList();
+                    tList.Remove("NA_42 - Else8");
+                    echoSongs = tList.ToArray();
+                    tList.Clear();
+                    mscActive = false;
+                }
+            }
         }
 
         static void RawUpdatePatch(On.RainWorldGame.orig_RawUpdate orig, RainWorldGame instance, float dt)
@@ -127,7 +154,7 @@ namespace VibeWorld
                     }
                 }
                 if (songOrder >= thisRegionList.Length) { songOrder = 0; }
-                if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
+                if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)Random.Range(0f, thisRegionList.Length - 0.1f)]; }
                 else { newSong = thisRegionList[songOrder]; }
 
                 Song song = new Song(musicPlayer, newSong, MusicPlayer.MusicContext.StoryMode)
