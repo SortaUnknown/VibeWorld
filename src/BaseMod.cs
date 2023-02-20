@@ -32,19 +32,19 @@ namespace VibeWorld
             On.RegionGate.Update += new On.RegionGate.hook_Update(GateUpdatePatch);
         }
 
-        public static Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
+        private static Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
 
-        public static bool filesChecked = false;
+        private static bool filesChecked = false;
 
-        public static int songOrder = 0;
+        private static int songOrder = 0;
 
-        public static SongMode songMode;
+        private static SongMode songMode;
 
-        public static bool echoMode = false;
+        private static bool echoMode = false;
 
         private static bool mscActive = false;
 
-        public static string[] modes =
+        public static readonly string[] modes =
         {
             "Intelligent Mode",
             "Default",
@@ -52,7 +52,7 @@ namespace VibeWorld
             "Echo Mode"
         };
 
-        public static string[] calmSongs =
+        private static readonly string[] calmSongs =
         {
             "NA_01 - Proxima",
             "NA_08 - Dark Sus",
@@ -60,7 +60,7 @@ namespace VibeWorld
             "NA_11 - Reminiscence"
         };
 
-        public static string[] echoSongs =
+        private static string[] echoSongs =
         {
             "NA_32 - Else1",
             "NA_33 - Else2",
@@ -71,9 +71,9 @@ namespace VibeWorld
             "NA_38 - Else7"
         };
 
-        public static string[] intelligentSongs;
+        private static string[] intelligentSongs;
 
-        public static string[] generalSongs;
+        private static string[] generalSongs;
 
         static void ModsInitPatch(On.RainWorld.orig_OnModsInit orig, RainWorld instance)
         {
