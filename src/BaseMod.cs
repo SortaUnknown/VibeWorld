@@ -32,7 +32,7 @@ namespace VibeWorld
             On.RegionGate.Update += new On.RegionGate.hook_Update(GateUpdatePatch);
         }
 
-        private static Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
+        private static readonly Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
 
         private static bool filesChecked = false;
 
@@ -92,7 +92,6 @@ namespace VibeWorld
                     List<string> tList = echoSongs.ToList();
                     tList.Add("NA_42 - Else8");
                     echoSongs = tList.ToArray();
-                    tList.Clear();
                     mscActive = true;
                 }
             }
@@ -103,7 +102,6 @@ namespace VibeWorld
                     List<string> tList = echoSongs.ToList();
                     tList.Remove("NA_42 - Else8");
                     echoSongs = tList.ToArray();
-                    tList.Clear();
                     mscActive = false;
                 }
             }
