@@ -116,8 +116,8 @@ namespace VibeWorld
 
             MusicPlayer musicPlayer = instance.manager.musicPlayer;
 
-            //Fade out regular SB songs and force engage Echo Mode in Depths for ambience
-            if (instance.Players[0].Room.name == "SB_E05" && !echoMode)
+            //Fade out regular SB songs and force engage Echo Mode in Depths or Rubicon for ambience
+            if ((instance.Players[0].Room.name == "SB_E05" || instance.world.region.name == "HR") && !echoMode)
             {
                 musicPlayer.song.FadeOut(100);
                 echoMode = true;
