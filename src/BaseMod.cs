@@ -44,6 +44,8 @@ namespace VibeWorld
 
         private static bool mscActive = false;
 
+        private static bool gateOpen = false;
+
         public static readonly string[] modes =
         {
             "Intelligent Mode",
@@ -215,15 +217,17 @@ namespace VibeWorld
         {
             orig.Invoke(instance, eu);
 
-            //If the song mode demands per region playlists, fade out the current song when the gate is open and analyze the newly available region
+            //If the song mode demands per region playlists, fade out the current song the first frame the gate is open and analyze the newly available region
             //TODO: incompatible with unintended methods to switch regions such as Warp Mod
-            if (instance.mode == RegionGate.Mode.MiddleOpen && songMode != SongMode.EchoMode && songMode != SongMode.GeneralMode)
+            if (!gateOpen && instance.mode == RegionGate.Mode.MiddleOpen && songMode != SongMode.EchoMode && songMode != SongMode.GeneralMode)
             {
                 Song playerSong = instance.room.game.manager.musicPlayer.song;
                 if (playerSong != null) { playerSong.FadeOut(100f); }
 
                 AnalyzeRegionMusic(instance.room.game);
+                gateOpen = true;
             }
+            else if (gateOpen && instance.mode != RegionGate.Mode.MiddleOpen) gateOpen = false;
         }
 
         public static void AnalyzeRegionMusic(RainWorldGame game)
