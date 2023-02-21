@@ -210,7 +210,7 @@ namespace VibeWorld
                 filesChecked = true;
             }
 
-            AnalyzeRegionMusic(instance);
+            AnalyzeRegionMusic(instance, instance.GetStorySession.characterStats.name);
         }
 
         static void GateUpdatePatch(On.RegionGate.orig_Update orig, RegionGate instance, bool eu)
@@ -224,13 +224,13 @@ namespace VibeWorld
                 Song playerSong = instance.room.game.manager.musicPlayer.song;
                 if (playerSong != null) { playerSong.FadeOut(100f); }
 
-                AnalyzeRegionMusic(instance.room.game);
+                AnalyzeRegionMusic(instance.room.game, instance.room.game.GetStorySession.characterStats.name);
                 gateOpen = true;
             }
             else if (gateOpen && instance.mode != RegionGate.Mode.MiddleOpen) gateOpen = false;
         }
 
-        public static void AnalyzeRegionMusic(RainWorldGame game)
+        public static void AnalyzeRegionMusic(RainWorldGame game, SlugcatStats.Name slugName)
         {
             if (songMode == SongMode.IntelligentMode)
             {
@@ -243,7 +243,7 @@ namespace VibeWorld
                     settingsProxy = new RoomSettings(room.name, game.world.region, false, false, game.StoryCharacter);
                     foreach (EventTrigger trigger in settingsProxy.triggers)
                     {
-                        if (trigger.tEvent.type == TriggeredEvent.EventType.MusicEvent)
+                        if (trigger.slugcats.Contains(slugName) && trigger.tEvent.type == TriggeredEvent.EventType.MusicEvent)
                         {
                             songList.Add((trigger.tEvent as MusicEvent).songName);
                         }
@@ -266,8 +266,6 @@ namespace VibeWorld
                 songList.RemoveAll(x => x == string.Empty);
                 intelligentSongs = songList.ToArray();
                 intelligentSongs.OrderBy(c => Random.value);
-                settingsProxy = null;
-                songList.Clear();
             }
         }
 
