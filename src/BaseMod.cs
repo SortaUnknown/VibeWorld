@@ -4,16 +4,18 @@ using UnityEngine;
 using Music;
 using RWCustom;
 using System.IO;
-using OptionalUI;
 using BepInEx;
+using System.Security.Permissions;
+
+#pragma warning disable CS0618 //Type or member is obsolete
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
+#pragma warning restore CS0618 //Type or member is obsolete
 
 namespace VibeWorld
 {
-    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.3")]
+    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4")]
     public class BaseMod : BaseUnityPlugin
     {
-        public static BaseMod instance;
-
         public enum SongMode
         {
             Default,
@@ -24,26 +26,27 @@ namespace VibeWorld
 
         public void OnEnable()
         {
-            instance = this;
-
+            On.RainWorld.OnModsInit += new On.RainWorld.hook_OnModsInit(ModsInitPatch);
             On.RainWorldGame.ctor += new On.RainWorldGame.hook_ctor(GameCtorPatch);
             On.RainWorldGame.RawUpdate += new On.RainWorldGame.hook_RawUpdate(RawUpdatePatch);
             On.RegionGate.Update += new On.RegionGate.hook_Update(GateUpdatePatch);
         }
 
+        private static readonly Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
 
-        public static Dictionary<string, string[]> regionSongList = new Dictionary<string, string[]>();
+        private static bool filesChecked = false;
 
-        public static bool filesChecked = false;
+        private static int songOrder = 0;
 
-        public static int songOrder = 0;
+        private static SongMode songMode;
 
-        public static SongMode songMode;
-        public static bool randomSelect;
+        private static bool echoMode = false;
 
-        public static bool echoMode = false;
+        private static bool mscActive = false;
 
-        public static string[] modes =
+        private static bool gateOpen = false;
+
+        public static readonly string[] modes =
         {
             "Intelligent Mode",
             "Default",
@@ -51,7 +54,7 @@ namespace VibeWorld
             "Echo Mode"
         };
 
-        public static string[] calmSongs =
+        private static readonly string[] calmSongs =
         {
             "NA_01 - Proxima",
             "NA_08 - Dark Sus",
@@ -59,7 +62,7 @@ namespace VibeWorld
             "NA_11 - Reminiscence"
         };
 
-        public static string[] echoSongs =
+        private static string[] echoSongs =
         {
             "NA_32 - Else1",
             "NA_33 - Else2",
@@ -70,9 +73,39 @@ namespace VibeWorld
             "NA_38 - Else7"
         };
 
-        public static string[] intelligentSongs;
+        private static string[] intelligentSongs;
 
-        public static string[] generalSongs;
+        private static string[] generalSongs;
+
+        static void ModsInitPatch(On.RainWorld.orig_OnModsInit orig, RainWorld instance)
+        {
+            orig.Invoke(instance);
+
+            MachineConnector.SetRegisteredOI("HelloThere.VibeWorld", new VibeConfig());
+
+            bool mscEnabled = MachineConnector.IsThisModActive("moreslugcats");
+
+            if (!mscActive)
+            {
+                if (mscEnabled)
+                {
+                    List<string> tList = echoSongs.ToList();
+                    tList.Add("NA_42 - Else8");
+                    echoSongs = tList.ToArray();
+                    mscActive = true;
+                }
+            }
+            else
+            {
+                if (!mscEnabled)
+                {
+                    List<string> tList = echoSongs.ToList();
+                    tList.Remove("NA_42 - Else8");
+                    echoSongs = tList.ToArray();
+                    mscActive = false;
+                }
+            }
+        }
 
         static void RawUpdatePatch(On.RainWorldGame.orig_RawUpdate orig, RainWorldGame instance, float dt)
         {
@@ -83,8 +116,8 @@ namespace VibeWorld
 
             MusicPlayer musicPlayer = instance.manager.musicPlayer;
 
-            //Fade out regular SB songs and force engage Echo Mode in Depths for ambience
-            if (instance.Players[0].Room.name == "SB_E05" && !echoMode)
+            //Fade out regular songs and force engage Echo Mode in Depths or Rubicon for ambience
+            if ((instance.Players[0].Room.name == "SB_E05" || instance.world.region.name == "HR") && !echoMode)
             {
                 musicPlayer.song.FadeOut(100);
                 echoMode = true;
@@ -110,7 +143,7 @@ namespace VibeWorld
                             thisRegionList = generalSongs;
                             break;
                         default:
-                            if (regionSongList.TryGetValue(Custom.RootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
+                            if (regionSongList.TryGetValue(Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar + instance.world.region.name + ".txt", out thisRegionList)) { }
                             //Fallback to hardcoded song list if no valid playlist for the region is found
                             else
                             {
@@ -121,22 +154,25 @@ namespace VibeWorld
                     }
                 }
                 if (songOrder >= thisRegionList.Length) { songOrder = 0; }
-                if (randomSelect) { newSong = thisRegionList[(int)UnityEngine.Random.Range(0f, thisRegionList.Length - 0.1f)]; }
+                if (VibeConfig.randomValue.Value) { newSong = thisRegionList[(int)Random.Range(0f, thisRegionList.Length - 0.1f)]; }
                 else { newSong = thisRegionList[songOrder]; }
 
-                musicPlayer.RequestArenaSong(newSong, 200f);
-
-                if (musicPlayer.song != null)
+                Song song = new Song(musicPlayer, newSong, MusicPlayer.MusicContext.StoryMode)
                 {
-                    songOrder++;
-                    musicPlayer.song.volume = 1;
-                }
+                    playWhenReady = true,
+                    volume = 1,
+                    fadeInTime = 40.0f
+                };
+                musicPlayer.song = song;
+                songOrder++;
             }
         }
 
         static void GameCtorPatch(On.RainWorldGame.orig_ctor orig, RainWorldGame instance, ProcessManager manager)
         {
             orig.Invoke(instance, manager);
+
+            songMode = StringToMode(VibeConfig.modeValue.Value);
 
             echoMode = false;
 
@@ -145,7 +181,7 @@ namespace VibeWorld
             //On first game start, read playlist files and fill out dictionaries/lists
             if (!filesChecked)
             {
-                string path = Custom.RootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar;
+                string path = Custom.LegacyRootFolderDirectory() + "Playlists" + Path.DirectorySeparatorChar;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -158,7 +194,7 @@ namespace VibeWorld
                         continue;
                     }
                     string[] songList = File.ReadAllLines(file);
-                    songList.OrderBy(c => UnityEngine.Random.value);
+                    songList.OrderBy(c => Random.value);
                     Debug.Log("VibeWorld:  Adding: " + file + " songs to list...");
                     regionSongList.Add(file, songList);
                 }
@@ -168,34 +204,31 @@ namespace VibeWorld
                     Debug.Log("VibeWorld:  General playlist not found! This may cause problems if you are using General Mode.");
                     generalSongs = calmSongs;
                 }
-                generalSongs.OrderBy(c => UnityEngine.Random.value);
+                generalSongs.OrderBy(c => Random.value);
                 filesChecked = true;
             }
 
-            AnalyzeRegionMusic(instance);
+            AnalyzeRegionMusic(instance, instance.GetStorySession.characterStats.name);
         }
 
         static void GateUpdatePatch(On.RegionGate.orig_Update orig, RegionGate instance, bool eu)
         {
             orig.Invoke(instance, eu);
 
-            //If the song mode demands per region playlists, fade out the current song when the gate is open and analyze the newly available region
+            //If the song mode demands per region playlists, fade out the current song the first frame the gate is open and analyze the newly available region
             //TODO: incompatible with unintended methods to switch regions such as Warp Mod
-            if (instance.mode == RegionGate.Mode.MiddleOpen && songMode != SongMode.EchoMode && songMode != SongMode.GeneralMode)
+            if (!gateOpen && instance.mode == RegionGate.Mode.MiddleOpen && songMode != SongMode.EchoMode && songMode != SongMode.GeneralMode)
             {
                 Song playerSong = instance.room.game.manager.musicPlayer.song;
                 if (playerSong != null) { playerSong.FadeOut(100f); }
 
-                AnalyzeRegionMusic(instance.room.game);
+                AnalyzeRegionMusic(instance.room.game, instance.room.game.GetStorySession.characterStats.name);
+                gateOpen = true;
             }
+            else if (gateOpen && instance.mode != RegionGate.Mode.MiddleOpen) gateOpen = false;
         }
 
-        public static OptionInterface LoadOI()
-        {
-            return new VibeConfig();
-        }
-
-        public static void AnalyzeRegionMusic(RainWorldGame game)
+        public static void AnalyzeRegionMusic(RainWorldGame game, SlugcatStats.Name slugName)
         {
             if (songMode == SongMode.IntelligentMode)
             {
@@ -208,7 +241,7 @@ namespace VibeWorld
                     settingsProxy = new RoomSettings(room.name, game.world.region, false, false, game.StoryCharacter);
                     foreach (EventTrigger trigger in settingsProxy.triggers)
                     {
-                        if (trigger.tEvent.type == TriggeredEvent.EventType.MusicEvent)
+                        if (trigger.slugcats.Contains(slugName) && trigger.tEvent.type == TriggeredEvent.EventType.MusicEvent)
                         {
                             songList.Add((trigger.tEvent as MusicEvent).songName);
                         }
@@ -230,9 +263,22 @@ namespace VibeWorld
                 }
                 songList.RemoveAll(x => x == string.Empty);
                 intelligentSongs = songList.ToArray();
-                intelligentSongs.OrderBy(c => UnityEngine.Random.value);
-                settingsProxy = null;
-                songList.Clear();
+                intelligentSongs.OrderBy(c => Random.value);
+            }
+        }
+
+        static SongMode StringToMode(string input)
+        {
+            switch (input)
+            {
+                case "General Mode":
+                    return SongMode.GeneralMode;
+                case "Intelligent Mode":
+                    return SongMode.IntelligentMode;
+                case "Echo Mode":
+                    return SongMode.EchoMode;
+                default:
+                    return SongMode.Default;
             }
         }
     }
