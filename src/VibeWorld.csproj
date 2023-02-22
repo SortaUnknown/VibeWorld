@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Version>1.4</Version>
+    <Authors>HelloThere</Authors>
+    <Copyright />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="PUBLIC-Assembly-CSharp">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/utils/PUBLIC-Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/core/BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="HOOKS-Assembly-CSharp">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/BepInEx/plugins/HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>/home/ht/.steam/debian-installation/steamapps/common/Rain World/RainWorld_Data/Managed/UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
