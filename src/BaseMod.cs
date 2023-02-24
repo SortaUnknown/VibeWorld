@@ -172,6 +172,9 @@ namespace VibeWorld
         {
             orig.Invoke(instance, manager);
 
+            //Vibe World only has use in Story Mode
+            if (!instance.IsStorySession) return;
+
             songMode = StringToMode(VibeConfig.modeValue.Value);
 
             echoMode = false;
