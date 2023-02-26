@@ -13,7 +13,7 @@ using System.Security.Permissions;
 
 namespace VibeWorld
 {
-    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4.1")]
+    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4.2")]
     public class BaseMod : BaseUnityPlugin
     {
         public enum SongMode
