@@ -125,7 +125,7 @@ namespace VibeWorld
             }
             
             //Playlist song selector code
-            if (musicPlayer != null && musicPlayer.song == null && instance.clock > 30)
+            if (musicPlayer != null && musicPlayer.song == null && instance.clock > 30 && instance.world.rainCycle.RainApproaching > 0.5f)
             {
                 string[] thisRegionList;
                 string newSong;
