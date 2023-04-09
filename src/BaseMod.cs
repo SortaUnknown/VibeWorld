@@ -251,22 +251,9 @@ namespace VibeWorld
                         }
                     }
                 }
-                //tbh i cant remember what this was supposed to accomplish, should clean it up
-                for (int i = 0; i < songList.Count; i++)
-                {
-                    if (songList[i] == string.Empty) continue;
-                    string[] checkArray = songList.ToArray();
-                    checkArray[i] = string.Empty;
-                    for (int a = 0; a < checkArray.Length; a++)
-                    {
-                        if (songList[i] == checkArray[a])
-                        {
-                            songList[a] = string.Empty;
-                        }
-                    }
-                }
+                //Clean up list, remove empty strings, remove duplicates
                 songList.RemoveAll(x => x == string.Empty);
-                intelligentSongs = songList.ToArray();
+                intelligentSongs = songList.Distinct().ToArray();
                 intelligentSongs.OrderBy(c => Random.value);
             }
         }
