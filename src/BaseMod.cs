@@ -13,7 +13,7 @@ using System.Security.Permissions;
 
 namespace VibeWorld
 {
-    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.4.2")]
+    [BepInPlugin("HelloThere.VibeWorld", "Vibe World", "1.5")]
     public class BaseMod : BaseUnityPlugin
     {
         public enum SongMode
@@ -125,7 +125,7 @@ namespace VibeWorld
             }
             
             //Playlist song selector code
-            if (musicPlayer != null && musicPlayer.song == null && instance.clock > 30)
+            if (musicPlayer != null && musicPlayer.song == null && instance.clock > 30 && instance.world.rainCycle.RainApproaching > 0.5f)
             {
                 string[] thisRegionList;
                 string newSong;
@@ -198,7 +198,6 @@ namespace VibeWorld
                         continue;
                     }
                     string[] songList = File.ReadAllLines(file);
-                    songList.OrderBy(c => Random.value);
                     Debug.Log("VibeWorld:  Adding: " + file + " songs to list...");
                     regionSongList.Add(file, songList);
                 }
@@ -208,7 +207,6 @@ namespace VibeWorld
                     Debug.Log("VibeWorld:  General playlist not found! This may cause problems if you are using General Mode.");
                     generalSongs = calmSongs;
                 }
-                generalSongs.OrderBy(c => Random.value);
                 filesChecked = true;
             }
 
@@ -251,23 +249,9 @@ namespace VibeWorld
                         }
                     }
                 }
-                //tbh i cant remember what this was supposed to accomplish, should clean it up
-                for (int i = 0; i < songList.Count; i++)
-                {
-                    if (songList[i] == string.Empty) continue;
-                    string[] checkArray = songList.ToArray();
-                    checkArray[i] = string.Empty;
-                    for (int a = 0; a < checkArray.Length; a++)
-                    {
-                        if (songList[i] == checkArray[a])
-                        {
-                            songList[a] = string.Empty;
-                        }
-                    }
-                }
+                //Clean up list, remove empty strings, remove duplicates
                 songList.RemoveAll(x => x == string.Empty);
-                intelligentSongs = songList.ToArray();
-                intelligentSongs.OrderBy(c => Random.value);
+                intelligentSongs = songList.Distinct().ToArray();
             }
         }
 

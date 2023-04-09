@@ -1,9 +1,0 @@
-{
-    "id": "HelloThere.VibeWorld",
-    "name": "Vibe World",
-    "version": "1.4.2",
-    "target_game_version": "v1.9.06",
-    "authors": "HelloThere",
-    "description": "Makes it so Rain World's music plays continuously, and adds configurable playlist functionality.",
-    "checksum_override_version": true
-}
