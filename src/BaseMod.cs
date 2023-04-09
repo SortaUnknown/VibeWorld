@@ -198,7 +198,6 @@ namespace VibeWorld
                         continue;
                     }
                     string[] songList = File.ReadAllLines(file);
-                    songList.OrderBy(c => Random.value);
                     Debug.Log("VibeWorld:  Adding: " + file + " songs to list...");
                     regionSongList.Add(file, songList);
                 }
@@ -208,7 +207,6 @@ namespace VibeWorld
                     Debug.Log("VibeWorld:  General playlist not found! This may cause problems if you are using General Mode.");
                     generalSongs = calmSongs;
                 }
-                generalSongs.OrderBy(c => Random.value);
                 filesChecked = true;
             }
 
@@ -254,7 +252,6 @@ namespace VibeWorld
                 //Clean up list, remove empty strings, remove duplicates
                 songList.RemoveAll(x => x == string.Empty);
                 intelligentSongs = songList.Distinct().ToArray();
-                intelligentSongs.OrderBy(c => Random.value);
             }
         }
 
